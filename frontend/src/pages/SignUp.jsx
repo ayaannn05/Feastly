@@ -4,6 +4,8 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { serverUrl } from "../App";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../firbase";
 
 function SignUp() {
   const primaryColor = "#ff4d2d";
@@ -17,6 +19,7 @@ function SignUp() {
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
+  const [err, setErr] = useState("");
 
   const handleSignUp = async () => {
     try {
@@ -31,8 +34,38 @@ function SignUp() {
         },
         { withCredentials: true }
       );
+      setErr("");
       console.log(result);
     } catch (err) {
+      setErr(err.response.data.message);
+      console.log(err.response?.data || err.message);
+    }
+  };
+
+  /// Sigining with google
+
+  const handleGoogleAuth = async () => {
+    if (!mobile) {
+      return setErr("mobile no is required");
+    }
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+
+    try {
+      const { data } = await axios.post(
+        `${serverUrl}/api/auth/google-auth`,
+        {
+          fullName: result.user.displayName,
+          email: result.user.email,
+          role,
+          mobile,
+        },
+        { withCredentials: true }
+      );
+      setErr("");
+      console.log(data);
+    } catch (err) {
+      setErr(err.response.data.message);
       console.log(err.response?.data || err.message);
     }
   };
@@ -70,6 +103,7 @@ function SignUp() {
             placeholder="Enter your fullname"
             className="w-full border rounded-lg px-3 py-2 focus:outline-none "
             style={{ border: `1px solid ${borderColor}` }}
+            required
           />
         </div>
         {/* Email */}
@@ -105,6 +139,7 @@ function SignUp() {
             onChange={(e) => setMobile(e.target.value)}
             className="w-full border rounded-lg px-3 py-2 focus:outline-none "
             style={{ border: `1px solid ${borderColor}` }}
+            required
           />
         </div>
         {/* Password */}
@@ -123,6 +158,7 @@ function SignUp() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border rounded-lg px-3 py-2 focus:outline-none "
               style={{ border: `1px solid ${borderColor}` }}
+              required
             />
             <button
               onClick={() => setshowPassord((prev) => !prev)}
@@ -143,6 +179,7 @@ function SignUp() {
           <div className="flex gap-2">
             {["user", "owner", "deliveryBoy"].map((r) => (
               <button
+                key={r}
                 className="flex-1 border rounded-lg px-3 py-2 text-centre
               font-medium transition-colors cursor-pointer hover:bg-[#e64323]"
                 onClick={() => setRole(r)}
@@ -158,14 +195,17 @@ function SignUp() {
           </div>
         </div>
         {/* Sign up button */}
-
         <button
           onClick={handleSignUp}
           className={`w-full font-semibold  py-2  rounded-lg transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
         >
           Sign up
         </button>
-        <button className="cursor-pointer w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 border-gray-400 hover:bg-gray-200">
+        {err && <p className="text-red-500 text-center my-4">{err}</p>}
+        <button
+          onClick={handleGoogleAuth}
+          className="cursor-pointer w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 border-gray-400 hover:bg-gray-200"
+        >
           <FcGoogle size={20} />
           <span>Sign up with google </span>
         </button>

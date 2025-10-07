@@ -4,6 +4,8 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { serverUrl } from "../App";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../firbase";
 
 function SignIn() {
   const primaryColor = "#ff4d2d";
@@ -14,6 +16,7 @@ function SignIn() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [err, setErr] = useState();
 
   const handleSignIn = async () => {
     try {
@@ -25,8 +28,32 @@ function SignIn() {
         },
         { withCredentials: true }
       );
+      setErr("");
       console.log(result);
     } catch (err) {
+      setErr(err.response.data.message);
+      console.log(err.response?.data || err.message);
+    }
+  };
+
+  /// Sigining with google
+
+  const handleGoogleAuth = async () => {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+
+    try {
+      const { data } = await axios.post(
+        `${serverUrl}/api/auth/google-auth`,
+        {
+          email: result.user.email,
+        },
+        { withCredentials: true }
+      );
+      setErr("");
+      console.log(data);
+    } catch (err) {
+      setErr(err.response.data.message);
       console.log(err.response?.data || err.message);
     }
   };
@@ -65,6 +92,7 @@ function SignIn() {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full border rounded-lg px-3 py-2 focus:outline-none "
             style={{ border: `1px solid ${borderColor}` }}
+            required
           />
         </div>
 
@@ -84,6 +112,7 @@ function SignIn() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border rounded-lg px-3 py-2 focus:outline-none "
               style={{ border: `1px solid ${borderColor}` }}
+              required
             />
             <button
               onClick={() => setshowPassord((prev) => !prev)}
@@ -94,7 +123,14 @@ function SignIn() {
           </div>
         </div>
 
-        <div className="mb-4 text-right text-[#ff4d3d]">Forget Password</div>
+        {/* Forget Password */}
+
+        <div
+          className="mb-4 text-right text-[#ff4d3d] cursor-pointer"
+          onClick={() => navigate("/forget-password")}
+        >
+          Forget Password
+        </div>
 
         {/* Sign In button */}
 
@@ -104,10 +140,17 @@ function SignIn() {
         >
           Sign In
         </button>
-        <button className="cursor-pointer w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 border-gray-400 hover:bg-gray-200">
+        {err && <p className="text-red-500 text-center my-4">{err}</p>}
+        {/* Sigin with google */}
+
+        <button
+          onClick={handleGoogleAuth}
+          className="cursor-pointer w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 border-gray-400 hover:bg-gray-200"
+        >
           <FcGoogle size={20} />
           <span>Sign in with google </span>
         </button>
+
         <p className="cursor-pointer text-center mt-6">
           Want to create a new account ? {""}
           <span onClick={() => navigate("/signup")} className="text-[#ff4d2d]">

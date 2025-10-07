@@ -2,9 +2,11 @@ import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import connectDb from "./config/db.js";
-import authRoutes from "./routes/authRoutes.js";
+
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import userRouter from "./routes/userRoutes.js";
+import authRouter from "./routes/authRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -20,7 +22,8 @@ app.use(
 );
 
 // Routes
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
 
 // Connect to DB and start server
 connectDb()
