@@ -15,9 +15,9 @@ const isAuth = async (req, res, next) => {
     if (!decodedToken) {
       return res.status(403).json({ message: "Token verification failed" });
     }
-    console.log(decodedToken);
+    // console.log(decodedToken);
     // 3. Attach userId to request so controllers can use it
-    req.userId = decodedToken.userId;
+    req.userId = decodedToken.id;
 
     // 4. Continue to the next middleware
     next();

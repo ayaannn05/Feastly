@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { serverUrl } from "../App";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firbase";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 
 function SignUp() {
   const primaryColor = "#ff4d2d";
@@ -20,6 +22,7 @@ function SignUp() {
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
+  const dispatch = useDispatch();
 
   const handleSignUp = async () => {
     try {
@@ -35,6 +38,7 @@ function SignUp() {
         { withCredentials: true }
       );
       setErr("");
+      dispatch(setUserData(result.data));
       console.log(result);
     } catch (err) {
       setErr(err.response.data.message);
@@ -63,7 +67,7 @@ function SignUp() {
         { withCredentials: true }
       );
       setErr("");
-      console.log(data);
+      dispatch(setUserData(data));
     } catch (err) {
       setErr(err.response.data.message);
       console.log(err.response?.data || err.message);
