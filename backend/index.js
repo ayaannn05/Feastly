@@ -7,6 +7,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import userRouter from "./routes/userRoutes.js";
 import authRouter from "./routes/authRoutes.js";
+import shopRouter from "./routes/shopRoutes.js";
+import itemRouter from "./routes/itemRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -24,6 +26,8 @@ app.use(
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/shop", shopRouter);
+app.use("/api/item", itemRouter);
 
 // Connect to DB and start server
 connectDb()

@@ -1,7 +1,11 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCity } from "../redux/userSlice";
+import {
+  setCurrentAddress,
+  setCurrentCity,
+  setCurrentState,
+} from "../redux/userSlice";
 
 function useGetCity() {
   const dispatch = useDispatch();
@@ -21,15 +25,17 @@ function useGetCity() {
           `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${apikey}`
         );
 
-        if (res.data?.results?.[0]?.city) {
-          dispatch(setCity(res.data.results[0].city));
-        } else {
-          console.error("City not found in response");
-          dispatch(setCity("Unknown"));
-        }
+        dispatch(setCurrentCity(res?.data?.results[0]?.city));
+        dispatch(setCurrentState(res?.data?.results[0]?.state));
+        dispatch(
+          setCurrentAddress(
+            res?.data?.results[0]?.address_line2 ||
+              res?.data?.results[0]?.address_line1
+          )
+        );
       } catch (error) {
         console.error("Error getting location:", error);
-        dispatch(setCity("Unknown"));
+        dispatch(setCurrentCity("Unknown"));
       }
     };
 
