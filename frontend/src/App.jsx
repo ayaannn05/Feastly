@@ -11,12 +11,17 @@ import CreateEditShop from "./pages/CreateEditShop";
 import AddItem from "./pages/AddItem";
 import EditItem from "./pages/EditItem";
 
+import useGetShopByCity from "./hooks/useGetShopByCity";
+import useGetItemsByCity from "./hooks/useGetItemByCity";
+
 export const serverUrl = "http://localhost:8000";
 
 function App() {
   useGetCurrentUser();
   useGetCity();
   useGetShop();
+  useGetShopByCity();
+  useGetItemsByCity();
   const { userData } = useSelector((state) => state.user);
   return (
     <Routes>
