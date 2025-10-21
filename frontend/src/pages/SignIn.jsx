@@ -67,7 +67,7 @@ function SignIn() {
       style={{ backgroundColor: bgColor }}
     >
       <div
-        className={`bg-white rounded-xl shawdow-lg w-full max-w-md p-8 border-[1px] `}
+        className={ `h-full bg-white rounded-xl shawdow-lg w-full max-w-md p-8 border-[1px] `}
         style={{ border: `1px solid ${borderColor}` }}
       >
         <h1

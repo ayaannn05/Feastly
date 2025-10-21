@@ -1,0 +1,55 @@
+import { useNavigate } from "react-router-dom";
+import { IoIosArrowRoundBack } from "react-icons/io";
+import { useSelector } from "react-redux";
+import CartItemCart from "../components/CartItemCart";
+
+function CartPage() {
+  const navigate = useNavigate();
+  const { cartItems, totalAmount } = useSelector((state) => state.user);
+
+  return (
+    <div className="min-h-screen bg-[#fff9f6] flex justify-center p-6">
+      <div className="w-full max-w-[800px]">
+        {/* Header Section */}
+        <div className="flex items-center gap-[20px] mb-6">
+          <div className="z-[10] cursor-pointer" onClick={() => navigate("/")}>
+            <IoIosArrowRoundBack size={35} className="text-[#ff4d2d]" />
+          </div>
+          <h1 className="text-2xl font-bold text-start">Your Cart</h1>
+        </div>
+
+        {/* Cart Items Section */}
+        {cartItems?.length === 0 ? (
+          <p className="text-gray-500 text-lg text-center">
+            Your Cart Is Empty
+          </p>
+        ) : (
+          <>
+            <div className="space-y-4">
+              {cartItems.map((item, index) => (
+                <CartItemCart data={item} key={item.id || index} />
+              ))}
+            </div>
+
+            <div className="mt-6 p-4 bg-white rounded-xl shadow justify-between flex items-center border">
+              <h1 className="text-lg font-semibold">Total Amount</h1>
+              <span className="text-xl font-bold text-[#ff4d2d] ">
+                ₹ {totalAmount}{" "}
+              </span>
+            </div>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => navigate("/checkout")}
+                className=" cursor-pointer bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-medium text-lg shadow-lg hover:bg-[#e04326] transition-colors"
+              >
+                Proceed to Checkout
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default CartPage;
