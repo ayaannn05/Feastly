@@ -6,6 +6,7 @@ import {
   setCurrentCity,
   setCurrentState,
 } from "../redux/userSlice";
+import { setAddrress, setLocation } from "../redux/mapSlice";
 
 function useGetCity() {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ function useGetCity() {
         });
 
         const { latitude, longitude } = position.coords;
+        dispatch(setLocation({ lat: latitude, lon: longitude }));
 
         const res = await axios.get(
           `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${apikey}`
@@ -33,6 +35,7 @@ function useGetCity() {
               res?.data?.results[0]?.address_line1
           )
         );
+        dispatch(setAddrress(res?.data?.results[0]?.formatted));
       } catch (error) {
         console.error("Error getting location:", error);
         dispatch(setCurrentCity("Unknown"));

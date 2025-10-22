@@ -3,14 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { IoLocationSharp } from "react-icons/io5";
 import { IoSearchOutline } from "react-icons/io5";
 import { TbCurrentLocation } from "react-icons/tb";
-import { useState } from "react";
+
 import { useSelector } from "react-redux";
+import { MapContainer, Marker, TileLayer } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
 function CheckOut() {
-  const { currentAddress } = useSelector((state) => state.user);
-  // start with empty input; only set when user explicitly clicks 'current location'
-  const [address, setAddress] = useState("");
+  const { location, address } = useSelector((state) => state.map);
   const navigate = useNavigate();
+  const onDragEnd = (event) => {
+    const marker = event.target;
+    const position = marker.getLatLng();
+    console.log("Marker dragged to:", position);
+    // You can dispatch an action here to update the location in the Redux store if needed
+  };
+
   return (
     <div className="min-h-screen bg-[#fff9f6] flex items-center justify-center p-6 ">
       <div
@@ -29,23 +36,33 @@ function CheckOut() {
           <div className="flex gap-2 mb-3">
             <input
               type="text"
+              value={address}
               placeholder="Enter your delivery address"
               className="cursor-pointer flex-1 text-sm p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff4d2d]"
-              onChange={(e) => setAddress(e.target.value)}
-              value={address}
             />
             <button className="bg-[#ff4d2d] hover:bg-[#e64526] text-white px-3 py-2 rounded-lg flex items-center justify-center  ">
               <IoSearchOutline size={17} />
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (currentAddress) setAddress(currentAddress);
-              }}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg flex items-center justify-center  "
-            >
+            <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg flex items-center justify-center  ">
               <TbCurrentLocation size={17} />
             </button>
+          </div>
+          <div>
+            <MapContainer
+              center={[location?.lat, location?.lon]}
+              zoom={16}
+              className="h-[300px] w-full rounded-lg z-0 cursor-pointer "
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              />
+              <Marker
+                position={[location?.lat, location?.lon]}
+                draggable
+                eventHandlers={{ dragend: onDragEnd }}
+              />
+            </MapContainer>
           </div>
         </section>
       </div>
