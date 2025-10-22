@@ -3,66 +3,156 @@ import { useNavigate } from "react-router-dom";
 import { IoLocationSharp } from "react-icons/io5";
 import { IoSearchOutline } from "react-icons/io5";
 import { TbCurrentLocation } from "react-icons/tb";
-
-import { useSelector } from "react-redux";
-import { MapContainer, Marker, TileLayer } from "react-leaflet";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { setAddrress, setLocation } from "../redux/mapSlice";
+import { useState, useEffect } from "react";
+
+function RecenterMap({ location }) {
+  const map = useMap();
+  if (location.lat && location.lon) {
+    map.setView([location.lat, location.lon], 16, { animate: true });
+  }
+  return null;
+}
 
 function CheckOut() {
   const { location, address } = useSelector((state) => state.map);
+  const [addressInput, setAddressInput] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (address) {
+      setAddressInput(address);
+    }
+  }, [address]);
   const onDragEnd = (event) => {
-    const marker = event.target;
-    const position = marker.getLatLng();
-    console.log("Marker dragged to:", position);
-    // You can dispatch an action here to update the location in the Redux store if needed
+    const { lat, lng } = event.target._latlng;
+
+    dispatch(setLocation({ lat, lon: lng }));
+    getAddressByLatLng(lat, lng);
+  };
+
+  const getAddressByLatLng = async (lat, lng) => {
+    try {
+      const apikey = import.meta.env.VITE_GEO_API_KEY;
+      const res = await axios.get(
+        `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&format=json&apiKey=${apikey}`
+      );
+      console.log(res?.data?.results[0].formatted);
+      dispatch(setAddrress(res?.data?.results[0]?.formatted));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAddressInput = async () => {
+    if (!addressInput.trim()) return;
+
+    const apikey = import.meta.env.VITE_GEO_API_KEY;
+    try {
+      const res = await axios.get(
+        `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(
+          addressInput
+        )}&format=json&apiKey=${apikey}`
+      );
+
+      if (res?.data?.results && res.data.results.length > 0) {
+        const { lat, lon } = res.data.results[0];
+        dispatch(setLocation({ lat, lon }));
+        dispatch(setAddrress(res.data.results[0]?.formatted || addressInput));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getCurrentLocation = async () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      dispatch(setLocation({ lat: latitude, lon: longitude }));
+      getAddressByLatLng(latitude, longitude);
+    });
   };
 
   return (
-    <div className="min-h-screen bg-[#fff9f6] flex items-center justify-center p-6 ">
+    <div className="min-h-screen bg-[#fff9f6] flex items-center justify-center p-3 sm:p-6">
       <div
-        className=" cursor-pointer absolute top-[20px] left-[20px] z[10] "
+        className="cursor-pointer absolute top-3 left-3 sm:top-[20px] sm:left-[20px] z-10"
         onClick={() => navigate("/cart")}
       >
         <IoIosArrowRoundBack size={35} className="text-[#ff4d2d]" />
       </div>
-      <div className="w-full max-w-[900px] bg-white p-6 rounded-2xl shadow-xl space-y-6 ">
-        <h1 className="text-2xl font-bold text-gray-800">CheckOut</h1>
+      <div className="w-full max-w-[900px] bg-white p-4 sm:p-6 rounded-2xl shadow-xl space-y-4 sm:space-y-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
+          CheckOut
+        </h1>
         {/* Delivery Location Section */}
         <section>
-          <h2 className="text-lg font-semibold mb-2 flex items-center gap-2 text-gray-800">
+          <h2 className="text-base sm:text-lg font-semibold mb-2 flex items-center gap-2 text-gray-800">
             <IoLocationSharp className="text-[#ff4d2d]" /> Delivery Location
           </h2>
           <div className="flex gap-2 mb-3">
             <input
               type="text"
-              value={address}
+              value={addressInput}
+              onChange={(e) => setAddressInput(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  getAddressInput();
+                }
+              }}
               placeholder="Enter your delivery address"
-              className="cursor-pointer flex-1 text-sm p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff4d2d]"
+              className="flex-1 text-xs sm:text-sm p-2 sm:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff4d2d]"
             />
-            <button className="bg-[#ff4d2d] hover:bg-[#e64526] text-white px-3 py-2 rounded-lg flex items-center justify-center  ">
+            <button
+              onClick={getAddressInput}
+              className="bg-[#ff4d2d] hover:bg-[#e64526] text-white px-3 py-2 rounded-lg flex items-center justify-center"
+            >
               <IoSearchOutline size={17} />
             </button>
-            <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg flex items-center justify-center  ">
+            <button
+              onClick={getCurrentLocation}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg flex items-center justify-center"
+            >
               <TbCurrentLocation size={17} />
+              <span className="ml-1 text-sm hidden sm:inline">
+                Current Location
+              </span>
             </button>
           </div>
           <div>
             <MapContainer
               center={[location?.lat, location?.lon]}
               zoom={16}
-              className="h-[300px] w-full rounded-lg z-0 cursor-pointer "
+              className="h-[200px] sm:h-[220px] md:h-[250px] w-full rounded-lg z-0 cursor-pointer"
             >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
+              <RecenterMap location={location} />
               <Marker
                 position={[location?.lat, location?.lon]}
                 draggable
                 eventHandlers={{ dragend: onDragEnd }}
               />
             </MapContainer>
+          </div>
+        </section>
+
+        {/* Payment Section */}
+        <section>
+          <h2 className="text-lg font-semibold mb-3 text-gray-800 ">
+            Payment Method
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div></div>
+            <div></div>
           </div>
         </section>
       </div>
