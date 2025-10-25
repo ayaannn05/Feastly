@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { IoLocationSharp } from "react-icons/io5";
 import { IoSearchOutline } from "react-icons/io5";
 import { TbCurrentLocation } from "react-icons/tb";
+import { MdDeliveryDining } from "react-icons/md";
+import { FaCreditCard } from "react-icons/fa";
+import { FaMobileScreenButton } from "react-icons/fa6";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
@@ -20,10 +23,13 @@ function RecenterMap({ location }) {
 
 function CheckOut() {
   const { location, address } = useSelector((state) => state.map);
+  const { cartItems, totalAmount } = useSelector((state) => state.user);
   const [addressInput, setAddressInput] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const deliveryFee = totalAmount > 500 ? 0 : 40;
+  const AmountWithDeliveryFee = totalAmount + deliveryFee;
 
   useEffect(() => {
     if (address) {
@@ -43,7 +49,7 @@ function CheckOut() {
       const res = await axios.get(
         `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&format=json&apiKey=${apikey}`
       );
-      console.log(res?.data?.results[0].formatted);
+
       dispatch(setAddrress(res?.data?.results[0]?.formatted));
     } catch (error) {
       console.log(error);
@@ -147,14 +153,88 @@ function CheckOut() {
 
         {/* Payment Section */}
         <section>
-          <h2 className="text-lg font-semibold mb-3 text-gray-800 ">
+          <h2 className="text-lg font-semibold mb-3 text-gray-800">
             Payment Method
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <div></div>
-            <div></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div
+              className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${
+                paymentMethod === "cod"
+                  ? "border-[#ff4d2d] bg-orange-50 shadow"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+              onClick={() => setPaymentMethod("cod")}
+            >
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+                <MdDeliveryDining className="text-green-600 text-xl" />
+              </span>
+              <div>
+                <p className="font-medium text-gray-800">Cash On Delivery</p>
+                <p className="text-xs text-gray-500">
+                  Pay when your food arrives
+                </p>
+              </div>
+            </div>
+            <div
+              className={`flex items-center gap-3 rounded-xl border p-4 text-left transition ${
+                paymentMethod === "online"
+                  ? "border-[#ff4d2d] bg-orange-50 shadow"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+              onClick={() => setPaymentMethod("online")}
+            >
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
+                <FaMobileScreenButton className="text-purple-700 text-lg" />
+              </span>
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                <FaCreditCard className="text-blue-700 text-lg" />
+              </span>
+              <div>
+                <p className="font-medium text-gray-800">
+                  UPI / Credit / Debit Card
+                </p>
+                <p className="text-xs text-gray-500">Pay Securely Online</p>
+              </div>
+            </div>
           </div>
         </section>
+
+        {/* Order Summary Section */}
+        <section>
+          <h2 className="text-lg font-semibold mb-3 text-gray-800">
+            Order Summary
+          </h2>
+          <div className="rounded-xl border bg-gray-50 p-4 space-y-2">
+            {cartItems.map((item, index) => (
+              <div
+                key={index}
+                className="flex justify-between text-sm text-gray-700"
+              >
+                <span>
+                  {item.name} x {item.quantity}
+                </span>
+                <span>₹ {item.price * item.quantity}</span>
+              </div>
+            ))}
+            <hr className="border-gray-200 my-2" />
+            <div className="flex justify-between font-medium text-gray-800">
+              <span>Subtotal</span>
+              <span>₹ {totalAmount}</span>
+            </div>
+            <div className="flex justify-between text-gray-700">
+              <span>Delivery Fee</span>
+              <span>{deliveryFee == 0 ? "Free" : `₹${deliveryFee}`}</span>
+            </div>
+            <hr className="border-gray-200 my-2" />
+            <div className="flex justify-between text-lg font-bold text-[#ff4d2d] pt-2">
+              <span>Total</span>
+              <span>₹ {AmountWithDeliveryFee}</span>
+            </div>
+          </div>
+        </section>
+        <button className="w-full bg-[#ff4d2d] hover:bg-[#e64526] text-white py-3 rounded-lg text-lg font-semibold mt-4">
+          {paymentMethod === "cod" ? "Place Order" : "Pay & Place Order"}{" "}
+        </button>
       </div>
     </div>
   );
