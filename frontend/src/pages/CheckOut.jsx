@@ -12,6 +12,7 @@ import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { setAddrress, setLocation } from "../redux/mapSlice";
 import { useState, useEffect } from "react";
+import { serverUrl } from "../App";
 
 function RecenterMap({ location }) {
   const map = useMap();
@@ -85,10 +86,35 @@ function CheckOut() {
     });
   };
 
+  const handlePlaceOrder = async () => {
+    try {
+      const result = await axios.post(
+        `${serverUrl}/api/order/place-order`,
+        {
+          cartItems,
+          deliveryAddress: {
+            address,
+            latitude: location.lat,
+            longitude: location.lon,
+          },
+          paymentMethod,
+          totalAmount: AmountWithDeliveryFee,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(result.data);
+      navigate("/order-placed");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#fff9f6] flex items-center justify-center p-3 sm:p-6">
       <div
-        className="cursor-pointer absolute top-3 left-3 sm:top-[20px] sm:left-[20px] z-10"
+        className="cursor-pointer absolute top-3 left-3 sm:top-5 sm:left-5 z-10"
         onClick={() => navigate("/cart")}
       >
         <IoIosArrowRoundBack size={35} className="text-[#ff4d2d]" />
@@ -232,7 +258,10 @@ function CheckOut() {
             </div>
           </div>
         </section>
-        <button className="w-full bg-[#ff4d2d] hover:bg-[#e64526] text-white py-3 rounded-lg text-lg font-semibold mt-4">
+        <button
+          className="w-full bg-[#ff4d2d] hover:bg-[#e64526] text-white py-3 rounded-lg text-lg font-semibold mt-4"
+          onClick={handlePlaceOrder}
+        >
           {paymentMethod === "cod" ? "Place Order" : "Pay & Place Order"}{" "}
         </button>
       </div>

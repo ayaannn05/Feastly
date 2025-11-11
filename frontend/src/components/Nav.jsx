@@ -101,7 +101,10 @@ function Nav() {
               </>
             )}
 
-            <div className=" hidden md:flex items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium ">
+            <div
+              onClick={() => navigate("/my-orders")}
+              className=" hidden md:flex items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium "
+            >
               <TbReceipt2 size={20} />
               <span>My Orders</span>
               <span className="absolute -right-3 -top-2 flex items-center justify-center w-6 h-6 rounded-full bg-[#ff4d2d] text-[#fff] text-xs font-bold">
@@ -111,22 +114,26 @@ function Nav() {
             <div className=" md:hidden flex items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium ">
               <TbReceipt2 size={20} />
 
-              <span className="absolute -right-3 -top-3 flex items-center justify-center w-6 h-6 rounded-full bg-[#ff4d2d] text-[#fff] text-xs font-bold">
-                0
-              </span>
+              <span className="absolute -right-3 -top-3 flex items-center justify-center w-6 h-6 rounded-full bg-[#ff4d2d] text-[#fff] text-xs font-bold"></span>
             </div>
           </>
         ) : (
           <>
             {" "}
-            <div onClick={()=>navigate("/cart")} className="relative cursor-pointer ">
-              <FiShoppingCart  size={25} className="text-[#ff4d2d]" />
+            <div
+              onClick={() => navigate("/cart")}
+              className="relative cursor-pointer "
+            >
+              <FiShoppingCart size={25} className="text-[#ff4d2d]" />
               <span className="absolute right-[-18px] top-[-15px] flex items-center justify-center w-6 h-6 rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d] text-xs font-bold">
                 {cartItems.length}
               </span>
             </div>
             {/* My Order */}
-            <button className="hidden md:block px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] text-sm font-medium ">
+            <button
+              onClick={() => navigate("/my-orders")}
+              className="cursor-pointer hidden md:block px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] text-sm font-medium "
+            >
               My Order
             </button>
           </>
@@ -146,7 +153,10 @@ function Nav() {
               {userData?.fullName.slice(0, 15)}
             </div>
             {userData.role == "user" && (
-              <div className="md:hidden text-[#ff4d2d] text-sm sm:text-base font-semibold cursor-pointer hover:text-[#e63e1c] transition-colors duration-150">
+              <div
+                onClick={() => navigate("/my-orders")}
+                className="md:hidden text-[#ff4d2d] text-sm sm:text-base font-semibold cursor-pointer hover:text-[#e63e1c] transition-colors duration-150"
+              >
                 My Order
               </div>
             )}

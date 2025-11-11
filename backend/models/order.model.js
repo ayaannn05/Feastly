@@ -5,6 +5,7 @@ const shopOrderItemSchema = new mongoose.Schema(
     item: { type: mongoose.Schema.Types.ObjectId, ref: "Item", required: true },
     price: { type: Number, required: true },
     quantity: { type: Number, required: true },
+    name: { type: String, required: true },
   },
   { timestamps: true }
 );
@@ -20,26 +21,30 @@ const shopOrderSchema = new mongoose.Schema(
     subTotal: { type: Number },
 
     shopOrderItems: [shopOrderItemSchema],
+    status: {
+      type: String,
+      enum: ["pending", "preparing", "on the way", "delivered", "cancelled"],
+      default: "pending",
+    },
   },
   { timestamps: true }
 );
 
-const orderSchema = new mongoone.Schema(
+const orderSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    paymentMehthod: {
+    paymentMethod: {
       type: String,
       enum: ["cod", "online"],
       required: true,
     },
     deliveryAddress: {
-      type: String,
-      required: true,
-      latitude: Number,
-      longitude: Number,
+      address: { type: String, required: true },
+      latitude: { type: Number, required: true },
+      longitude: { type: Number, required: true },
     },
     totalAmount: { type: Number, required: true },
-    shopOrder: [],
+    shopOrder: [shopOrderSchema],
   },
 
   { timestamps: true }
