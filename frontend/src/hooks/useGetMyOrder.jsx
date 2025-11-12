@@ -13,7 +13,6 @@ function useGetMyOrders() {
           withCredentials: true,
         });
         dispatch(setMyOrders(result.data));
-        console.log(result.data);
       } catch (err) {
         console.error(
           "Error fetching my orders:",
