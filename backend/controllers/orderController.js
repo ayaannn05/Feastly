@@ -89,7 +89,8 @@ export const getMyOrders = async (req, res) => {
         .sort({ createdAt: -1 })
         .populate("shopOrder.shop", "name")
         .populate("user")
-        .populate("shopOrder.shopOrderItems.item", "name image price");
+        .populate("shopOrder.shopOrderItems.item", "name image price")
+        .populate("shopOrder.assignedDeliveryBoy", "fullName email mobile");
 
       const filteredOrders = orders.map((order) => ({
         _id: order._id,
