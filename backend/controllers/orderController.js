@@ -286,3 +286,65 @@ export const acceptOrder = async (req, res) => {
     res.status(500).json({ message: `Accept order error ${error}` });
   }
 };
+
+export const getcurrentOrder = async (req, res) => {
+  try {
+    const assignment = await DeliveryAssignment.findOne({
+      assignedTo: req.userId,
+      status: "assigned",
+    })
+      .populate("shop", "name")
+      .populate("assignedTo", "fullName email mobile location")
+      .populate({
+        path: "order",
+        populate: [{ path: "user", select: "fullName email mobile location" }],
+      });
+
+    if (!assignment) {
+      return res.status(404).json({ message: "No current assignment found" });
+    }
+
+    if (!assignment.order) {
+      return res
+        .status(404)
+        .json({ message: "No order found for this assignment" });
+    }
+
+    const shopOrder = assignment.order.shopOrder.find(
+      (so) => so._id.toString() === assignment.shopOrderId.toString()
+    );
+
+    if (!shopOrder) {
+      return res
+        .status(404)
+        .json({ message: "No shop order found for this assignment" });
+    }
+
+    let deliveryBoyLocation = { lat: null, lon: null };
+    let customerLocation = { lat: null, lon: null };
+
+    if (assignment.assignedTo.location.coordinates.length === 2) {
+      deliveryBoyLocation.lat = assignment.assignedTo.location.coordinates[1];
+      deliveryBoyLocation.lon = assignment.assignedTo.location.coordinates[0];
+    }
+    if (
+      assignment.order.deliveryAddress.latitude &&
+      assignment.order.deliveryAddress.longitude
+    ) {
+      customerLocation.lat = assignment.order.deliveryAddress.latitude;
+      customerLocation.lon = assignment.order.deliveryAddress.longitude;
+    }
+
+    return res.status(200).json({
+      _id: assignment.order._id,
+      user: assignment.order.user,
+      shopOrder,
+      deliveryBoyLocation,
+      customerLocation,
+      deliveryAddress: assignment.order.deliveryAddress.address,
+      shopName: assignment.shop.name,
+    });
+  } catch (error) {
+    res.status(500).json({ message: `Get current order error ${error}` });
+  }
+};

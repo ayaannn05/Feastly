@@ -7,14 +7,16 @@ import {
   updateOrderStatus,
   getDeliveryBoysAssignment,
   acceptOrder,
+  getcurrentOrder,
 } from "../controllers/orderController.js";
 
 const OrderRouter = express.Router();
 
 OrderRouter.post("/place-order", isAuth, placeOrder);
-OrderRouter.get("/my-orders", isAuth, getMyOrders);
 OrderRouter.post("/update-status/:orderId/:shopId", isAuth, updateOrderStatus);
+OrderRouter.get("/my-orders", isAuth, getMyOrders);
 OrderRouter.get("/get-assignments", isAuth, getDeliveryBoysAssignment);
 OrderRouter.get("/accept-order/:assignmentId", isAuth, acceptOrder);
+OrderRouter.get("/get-current-orders", isAuth, getcurrentOrder);
 
 export default OrderRouter;
