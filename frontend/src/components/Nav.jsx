@@ -11,7 +11,9 @@ import { setUserData } from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
 
 function Nav() {
-  const { userData, currentCity, cartItems } = useSelector((state) => state.user);
+  const { userData, currentCity, cartItems } = useSelector(
+    (state) => state.user
+  );
   const { myShopData } = useSelector((state) => state.owner);
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -111,24 +113,31 @@ function Nav() {
                 0
               </span>
             </div>
-            <div className=" md:hidden flex items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium ">
+            <div
+              onClick={() => navigate("/my-orders")}
+              className=" md:hidden flex items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium "
+            >
               <TbReceipt2 size={20} />
 
-              <span className="absolute -right-3 -top-3 flex items-center justify-center w-6 h-6 rounded-full bg-[#ff4d2d] text-[#fff] text-xs font-bold"></span>
+              <span className="absolute -right-3 -top-3 flex items-center justify-center w-6 h-6 rounded-full bg-[#ff4d2d] text-[#fff] text-xs font-bold">
+                1
+              </span>
             </div>
           </>
         ) : (
           <>
-            {" "}
-            <div
-              onClick={() => navigate("/cart")}
-              className="relative cursor-pointer "
-            >
-              <FiShoppingCart size={25} className="text-[#ff4d2d]" />
-              <span className="absolute right-[-18px] top-[-15px] flex items-center justify-center w-6 h-6 rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d] text-xs font-bold">
-                {cartItems.length}
-              </span>
-            </div>
+            {userData.role == "user" && (
+              <div
+                onClick={() => navigate("/cart")}
+                className="relative cursor-pointer "
+              >
+                <FiShoppingCart size={25} className="text-[#ff4d2d]" />
+                <span className="absolute right-[-18px] top-[-15px] flex items-center justify-center w-6 h-6 rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d] text-xs font-bold">
+                  {cartItems.length}
+                </span>
+              </div>
+            )}
+
             {/* My Order */}
             <button
               onClick={() => navigate("/my-orders")}
@@ -148,7 +157,9 @@ function Nav() {
         </div>
         {showInfo && (
           // Profile Dropdown
-          <div className="fixed top-20 right-4 sm:right-[10%] md:right-[12%] lg:right-[15%] xl:right-[20%] w-44 sm:w-48 bg-white shadow-2xl rounded-xl p-5 flex flex-col gap-2.5 z-[9999] transition-all duration-200 ease-in-out">
+          <div
+            className={`fixed top-20 right-4 sm:right-[10%] md:right-[12%] lg:right-[15%] xl:right-[20%] w-44 sm:w-48 bg-white shadow-2xl rounded-xl p-5 flex flex-col gap-2.5 z-[9999] transition-all duration-200 ease-in-out`}
+          >
             <div className="text-sm sm:text-base font-semibold text-gray-800 truncate">
               {userData?.fullName.slice(0, 15)}
             </div>

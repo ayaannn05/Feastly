@@ -36,7 +36,6 @@ function useGetCity() {
           )
         );
         dispatch(setAddrress(res?.data?.results[0]?.formatted));
-        console.log(res.data);
       } catch (error) {
         console.error("Error getting location:", error);
         dispatch(setCurrentCity("Unknown"));

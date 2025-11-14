@@ -3,8 +3,10 @@ import { MdPhone } from "react-icons/md";
 import { serverUrl } from "../App";
 import { updateOrderStatus } from "../redux/userSlice";
 import { useDispatch } from "react-redux";
+import { useState } from "react";
 
 function OwnerOrderCard({ data }) {
+  const [availableBoys, setAvailableBoys] = useState([]);
   const dispatch = useDispatch();
   const handleUpdateStatus = async (orderId, shopId, status) => {
     try {
@@ -14,6 +16,7 @@ function OwnerOrderCard({ data }) {
         { withCredentials: true }
       );
       dispatch(updateOrderStatus({ orderId, shopId, status }));
+      setAvailableBoys(result.data.availableBoys);
       console.log(result.data);
     } catch (error) {
       console.error("Error updating status:", error);
@@ -93,6 +96,25 @@ function OwnerOrderCard({ data }) {
           <option value="out of delivery">Out Of Delivery</option>
         </select>
       </div>
+
+      {data.shopOrder[0].status === "out of delivery" && (
+        <div className="mt-3 p-3 border rounded-lg bg-orange-50 text-sm ">
+          <h3 className="text-md font-semibold mb-2 text-gray-800">
+            Available Delivery Boys:
+          </h3>
+          {availableBoys.length > 0 ? (
+            <ul className="space-y-2 max-h-40 overflow-y-auto">
+              {availableBoys.map((boy) => (
+                <li key={boy.id}>
+                  {boy.fullName} - {boy.mobile}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-600">Waiting for delivery boy to accept</p>
+          )}
+        </div>
+      )}
 
       <div className="text-right font-bold text-gray-800 text-sm">
         Total: ₹{data.shopOrder[0].subTotal}
