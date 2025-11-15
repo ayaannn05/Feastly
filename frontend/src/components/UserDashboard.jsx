@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+
 function UserDashboard() {
   const { currentCity, shopInMyCity, itemsInMyCity } = useSelector(
     (state) => state.user
@@ -148,12 +149,7 @@ function UserDashboard() {
             ref={shopScrollRef}
           >
             {shopInMyCity?.map((shop, index) => (
-              <CategoryCard
-                name={shop.name}
-                image={shop.image}
-                key={index}
-                onClick={() => navigate(`/shop/${shop._id}`)}
-              />
+              <CategoryCard name={shop.name} image={shop.image} key={index} />
             ))}
           </div>
           {showRightShopButton && (
@@ -181,5 +177,6 @@ function UserDashboard() {
     </div>
   );
 }
+
 
 export default UserDashboard;

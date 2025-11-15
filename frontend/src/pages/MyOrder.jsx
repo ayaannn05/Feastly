@@ -18,11 +18,19 @@ function MyOrder() {
         </div>
 
         <div className="space-y-4">
-          {myOrders?.map((order, index) =>
-            userData.role === "user" ? (
-              <UserOrderCard data={order} key={order._id || index} />
+          {!myOrders || myOrders.length === 0 ? (
+            userData?.role === "user" ? (
+              <UserOrderCard data={null} />
             ) : (
-              <OwnerOrderCard data={order} key={order._id || index} />
+              <OwnerOrderCard data={null} />
+            )
+          ) : (
+            myOrders.map((order, index) =>
+              userData.role === "user" ? (
+                <UserOrderCard data={order} key={order._id || index} />
+              ) : (
+                <OwnerOrderCard data={order} key={order._id || index} />
+              )
             )
           )}
         </div>

@@ -4,10 +4,38 @@ import { serverUrl } from "../App";
 import { updateOrderStatus } from "../redux/userSlice";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
+import { IoReceipt } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 function OwnerOrderCard({ data }) {
   const [availableBoys, setAvailableBoys] = useState([]);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Check if there's no order data
+  if (!data || !data.shopOrder || data.shopOrder.length === 0) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-12 text-center">
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
+            <IoReceipt className="text-gray-400 w-10 h-10" />
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-800 text-lg mb-2">
+              No Orders Available
+            </h3>
+            <p className="text-gray-500 text-sm">
+              You don't have any orders yet.
+            </p>
+            <p className="text-gray-500 text-sm">
+              Orders will appear here when customers place them.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const handleUpdateStatus = async (orderId, shopId, status) => {
     try {
       const result = await axios.post(

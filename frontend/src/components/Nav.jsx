@@ -152,22 +152,26 @@ function Nav() {
             </button>
           )}
 
-          {/* Orders Button */}
-          <button
-            onClick={() => navigate("/my-orders")}
-            className="relative hidden sm:flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-orange-50 hover:to-red-50 text-gray-700 hover:text-orange-600 rounded-xl font-semibold text-sm transition-all duration-300 border border-gray-200 hover:border-orange-200 hover:shadow-md"
-          >
-            <TbReceipt2 className="w-4 h-4" />
-            <span>{userData.role === "owner" ? "Orders" : "My Orders"}</span>
-          </button>
+          {/* Orders Button - Hide for delivery boy */}
+          {userData.role !== "deliveryBoy" && (
+            <>
+              <button
+                onClick={() => navigate("/my-orders")}
+                className="relative hidden sm:flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-orange-50 hover:to-red-50 text-gray-700 hover:text-orange-600 rounded-xl font-semibold text-sm transition-all duration-300 border border-gray-200 hover:border-orange-200 hover:shadow-md"
+              >
+                <TbReceipt2 className="w-4 h-4" />
+                <span>{userData.role === "owner" ? "Orders" : "Orders"}</span>
+              </button>
 
-          {/* Mobile Orders Icon */}
-          <button
-            onClick={() => navigate("/my-orders")}
-            className="sm:hidden relative w-10 h-10 flex items-center justify-center rounded-xl hover:bg-orange-50 transition-all duration-200 active:scale-95"
-          >
-            <TbReceipt2 className="text-gray-700 w-5 h-5" />
-          </button>
+              {/* Mobile Orders Icon */}
+              <button
+                onClick={() => navigate("/my-orders")}
+                className="sm:hidden relative w-10 h-10 flex items-center justify-center rounded-xl hover:bg-orange-50 transition-all duration-200 active:scale-95"
+              >
+                <TbReceipt2 className="text-gray-700 w-5 h-5" />
+              </button>
+            </>
+          )}
 
           {/* Profile Avatar with Glow */}
           <div className="relative">
