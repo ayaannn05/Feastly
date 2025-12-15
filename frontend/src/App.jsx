@@ -12,6 +12,7 @@ import AddItem from "./pages/AddItem";
 import EditItem from "./pages/EditItem";
 
 import useGetShopByCity from "./hooks/useGetShopByCity";
+
 import useGetItemsByCity from "./hooks/useGetItemByCity";
 import CartPage from "./pages/CartPage";
 import CheckOut from "./pages/CheckOut";
@@ -20,6 +21,7 @@ import MyOrder from "./pages/MyOrder";
 import useGetMyOrder from "./hooks/useGetMyOrder";
 import useUpdateLocation from "./hooks/useUpdateLocation";
 import TrackOrder from "./pages/TrackOrder";
+import ShopPage from "./pages/ShopPage";
 
 export const serverUrl = "http://localhost:8000";
 
@@ -31,6 +33,7 @@ function App() {
   useGetItemsByCity();
   useGetMyOrder();
   useUpdateLocation();
+
   const { userData } = useSelector((state) => state.user);
   return (
     <Routes>
@@ -81,6 +84,10 @@ function App() {
       <Route
         path="/track-order/:orderId"
         element={userData ? <TrackOrder /> : <Navigate to={"/signin"} />}
+      />
+      <Route
+        path="/shop-page/:shopId"
+        element={userData ? <ShopPage /> : <Navigate to={"/signin"} />}
       />
     </Routes>
   );

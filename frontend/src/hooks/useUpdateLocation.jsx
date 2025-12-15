@@ -14,6 +14,7 @@ function useUpdateLocation() {
         },
         { withCredentials: true }
       );
+   
     };
     navigator.geolocation.watchPosition((position) => {
       updateLocation(position.coords.latitude, position.coords.longitude);

@@ -9,7 +9,6 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-
 function UserDashboard() {
   const { currentCity, shopInMyCity, itemsInMyCity } = useSelector(
     (state) => state.user
@@ -30,6 +29,18 @@ function UserDashboard() {
         element.scrollLeft + element.clientWidth < element.scrollWidth
       );
     }
+  };
+
+  // console.log(itemsInMyCity);
+
+  const handleCategoryClick = (category) => {
+    
+    console.log("Category clicked:", category);
+
+  };
+
+  const handleShopClick = (shopId) => {
+    navigate(`/shop-page/${shopId}`);
   };
 
   const scrollHandler = (ref, direction) => {
@@ -116,6 +127,7 @@ function UserDashboard() {
                 image={cate.image}
                 index={index}
                 key={index}
+                onClick={() => handleCategoryClick(cate.category)}
               />
             ))}
           </div>
@@ -149,7 +161,12 @@ function UserDashboard() {
             ref={shopScrollRef}
           >
             {shopInMyCity?.map((shop, index) => (
-              <CategoryCard name={shop.name} image={shop.image} key={index} />
+              <CategoryCard 
+                name={shop.name} 
+                image={shop.image} 
+                key={index}
+                onClick={() => handleShopClick(shop._id)}
+              />
             ))}
           </div>
           {showRightShopButton && (
@@ -177,6 +194,5 @@ function UserDashboard() {
     </div>
   );
 }
-
 
 export default UserDashboard;

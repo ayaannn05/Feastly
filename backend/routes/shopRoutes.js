@@ -3,6 +3,7 @@ import {
   createEditShop,
   getMyShop,
   getShopByCity,
+  getShopById,
 } from "../controllers/shopController.js";
 import isAuth from "../middleware/isAuth.js";
 import { upload } from "../middleware/multer.js";
@@ -12,5 +13,6 @@ const shopRouter = express.Router();
 shopRouter.post("/create-edit", isAuth, upload.single("image"), createEditShop);
 shopRouter.get("/get-my", isAuth, getMyShop);
 shopRouter.get("/get-by-city/:city", isAuth, getShopByCity);
+shopRouter.get("/get-by-id/:shopId", isAuth, getShopById);
 
 export default shopRouter;

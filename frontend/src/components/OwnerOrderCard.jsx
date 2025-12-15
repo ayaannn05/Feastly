@@ -5,12 +5,10 @@ import { updateOrderStatus } from "../redux/userSlice";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
 import { IoReceipt } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
 
 function OwnerOrderCard({ data }) {
   const [availableBoys, setAvailableBoys] = useState([]);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   // Check if there's no order data
   if (!data || !data.shopOrder || data.shopOrder.length === 0) {

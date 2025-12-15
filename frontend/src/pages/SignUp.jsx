@@ -80,7 +80,7 @@ function SignUp() {
       style={{ backgroundColor: bgColor }}
     >
       <div
-        className={`bg-white rounded-xl shawdow-lg w-full max-w-md p-8 border-[1px] `}
+        className={`h-full bg-white rounded-xl shawdow-lg w-full max-w-md p-8 border-[1px] `}
         style={{ border: `1px solid ${borderColor}` }}
       >
         <h1
@@ -180,6 +180,14 @@ function SignUp() {
           >
             Role
           </label>
+          {/* <select className="w-full border rounded-lg px-3 py-2 focus:outline-none " style={{ border: `1px solid ${borderColor}` }} value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="">Select Role</option>
+            {["user", "owner", "deliveryBoy"].map((r) => (
+              <option value={r} key={r} onClick={() => setRole(r)}>
+                {r}
+              </option>
+            ))} 
+          </select> */}
           <div className="flex gap-2">
             {["user", "owner", "deliveryBoy"].map((r) => (
               <button

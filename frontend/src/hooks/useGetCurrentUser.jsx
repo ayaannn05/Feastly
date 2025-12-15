@@ -13,6 +13,7 @@ function useGetCurrentUser() {
           withCredentials: true,
         });
         dispatch(setUserData(result.data));
+   
       } catch (err) {
         console.error(
           "Error fetching current user:",
