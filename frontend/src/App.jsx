@@ -22,6 +22,7 @@ import useGetMyOrder from "./hooks/useGetMyOrder";
 import useUpdateLocation from "./hooks/useUpdateLocation";
 import TrackOrder from "./pages/TrackOrder";
 import ShopPage from "./pages/ShopPage";
+import CategoryPage from "./pages/CategoryPage";
 
 export const serverUrl = "http://localhost:8000";
 
@@ -89,6 +90,9 @@ function App() {
         path="/shop-page/:shopId"
         element={userData ? <ShopPage /> : <Navigate to={"/signin"} />}
       />
+      <Route 
+      path="/category/:category"
+      element={userData ? <CategoryPage/> : <Navigate to={"/signin"}/>}/>
     </Routes>
   );
 }

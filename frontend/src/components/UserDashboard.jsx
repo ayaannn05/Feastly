@@ -34,8 +34,7 @@ function UserDashboard() {
   // console.log(itemsInMyCity);
 
   const handleCategoryClick = (category) => {
-    
-    console.log("Category clicked:", category);
+    navigate(`/category/${category}`);
 
   };
 

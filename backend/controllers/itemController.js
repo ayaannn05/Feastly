@@ -122,3 +122,24 @@ export const getItemByCity = async (req, res) => {
     return res.status(500).json({ message: `get shop by city error ${error}` });
   }
 };
+
+export const getItemByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    if (!category) {
+      return res.status(400).json({ message: "category is required" });
+    }
+
+    const items = await Item.find({
+      category: { $regex: new RegExp(`^${category}$`, "i") },
+    }).populate("shop");
+
+    if (!items) {
+      return res.status(400).json({ message: "items not found" });
+    }
+
+    return res.status(200).json(items);
+  } catch (error) {
+    return res.status(500).json({ message: `get items by category error ${error}` });
+  }
+};  
