@@ -337,6 +337,7 @@ export const getcurrentOrder = async (req, res) => {
 
     return res.status(200).json({
       _id: assignment.order._id,
+      assignmentId: assignment._id,
       user: assignment.order.user,
       shopOrder,
       deliveryBoyLocation,
@@ -376,3 +377,36 @@ export const getOrderById = async (req, res) => {
     return res.status(500).json({ message: `Get order by ID error ${error}` });
   }
 };
+
+export const completeOrder = async (req, res) => {
+  try {
+    const { assignmentId } = req.params;
+    const assignment = await DeliveryAssignment.findById(assignmentId);
+    if (!assignment) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    assignment.status = "completed";
+    assignment.completedAt = new Date();
+    await assignment.save();
+
+    const order = await Order.findById(assignment.order);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    const shopOrder = order.shopOrder.find(
+      (so) => so._id.toString() === assignment.shopOrderId.toString()
+    );
+
+    if (!shopOrder) {
+      return res.status(404).json({ message: "Shop order not found" });
+    }
+
+    shopOrder.status = "delivered";
+    await order.save();
+    res.status(200).json({ message: "Order completed successfully" });
+  } catch (error) {
+    res.status(500).json({ message: `Complete order error ${error}` });
+  }
+};    

@@ -9,14 +9,14 @@ function DeliveryBoy() {
   const { userData } = useSelector((state) => state.user);
   const [availableAssignments, setAvailableAssignments] = useState(null);
   const [currentOrder, setCurrentOrder] = useState();
-  const [showOtp, setShowOtp] = useState(false);
+
 
   const getAssignments = async () => {
     try {
       const result = await axios.get(`${serverUrl}/api/order/get-assignments`, {
         withCredentials: true,
       });
-      console.log(result.data);
+      // console.log(result.data);
       setAvailableAssignments(result.data);
     } catch (error) {
       console.error("Error fetching assignments:", error);
@@ -47,16 +47,28 @@ function DeliveryBoy() {
           withCredentials: true,
         }
       );
-      console.log(result.data);
+      // console.log(result.data);
       setCurrentOrder(result.data);
     } catch (error) {
       console.error("Error fetching current orders:", error);
     }
   };
 
-  const handleSendOtp = (e) => {
-    setShowOtp(true);
-  };
+const handleCompleteOrder = async () => {
+    try {
+      const result = await axios.get(
+        `${serverUrl}/api/order/complete-order/${currentOrder.assignmentId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      // console.log(result.data);
+      setCurrentOrder(null);
+      getAssignments();
+    } catch (error) {
+      console.error("Error completing order:", error);
+    }
+  }
 
   useEffect(() => {
     getAssignments();
@@ -360,26 +372,14 @@ function DeliveryBoy() {
 
             {/* OTP Verification */}
             <div className="mt-2">
-              {!showOtp ? (
+            
                 <button
-                  onClick={handleSendOtp}
+                  onClick={handleCompleteOrder}
                   className="cursor-pointer w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow transition-all duration-200 whitespace-nowrap"
                 >
                   Mark as Delivered
                 </button>
-              ) : (
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    placeholder={`Enter OTP sent to ${currentOrder.user.fullName}`}
-                    maxLength="6"
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                  />
-                  <button className=" cursor-pointer px-6 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow transition-all duration-200 whitespace-nowrap">
-                    Verify & Complete
-                  </button>
-                </div>
-              )}
+             
             </div>
           </div>
         )}

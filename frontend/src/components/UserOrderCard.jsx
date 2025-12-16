@@ -19,7 +19,7 @@ function UserOrderCard({ data }) {
       pending: "bg-yellow-100 text-yellow-700 border-yellow-200",
       preparing: "bg-blue-100 text-blue-700 border-blue-200",
       "out of delivery": "bg-green-100 text-green-700 border-green-200",
-      delivered: "bg-gray-100 text-gray-700 border-gray-200"
+      delivered: "bg-gray-100 text-gray-700 border-gray-200",
     };
     return colors[status] || "bg-gray-100 text-gray-700 border-gray-200";
   };
@@ -33,9 +33,15 @@ function UserOrderCard({ data }) {
             <IoReceipt className="text-gray-400 w-10 h-10" />
           </div>
           <div>
-            <h3 className="font-bold text-gray-800 text-lg mb-2">No Orders Yet</h3>
-            <p className="text-gray-500 text-sm">You haven't placed any orders yet.</p>
-            <p className="text-gray-500 text-sm">Start shopping to see your orders here!</p>
+            <h3 className="font-bold text-gray-800 text-lg mb-2">
+              No Orders Yet
+            </h3>
+            <p className="text-gray-500 text-sm">
+              You haven't placed any orders yet.
+            </p>
+            <p className="text-gray-500 text-sm">
+              Start shopping to see your orders here!
+            </p>
           </div>
           <button
             onClick={() => navigate("/")}
@@ -68,7 +74,11 @@ function UserOrderCard({ data }) {
         </div>
 
         {/* Status Badge */}
-        <span className={`px-3 py-1 rounded-lg border text-xs font-semibold uppercase ${getStatusColor(data.shopOrder?.[0].status)}`}>
+        <span
+          className={`px-3 py-1 rounded-lg border text-xs font-semibold uppercase ${getStatusColor(
+            data.shopOrder?.[0].status
+          )}`}
+        >
           {data.shopOrder?.[0].status}
         </span>
       </div>
@@ -77,7 +87,9 @@ function UserOrderCard({ data }) {
       <div className="p-5 space-y-4">
         {data.shopOrder.map((shopOrder, index) => (
           <div key={index} className="space-y-3">
-            <h4 className="font-bold text-gray-800 text-sm">{shopOrder.shop.name}</h4>
+            <h4 className="font-bold text-gray-800 text-sm">
+              {shopOrder.shop.name}
+            </h4>
 
             {/* Items Grid - Compact */}
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
@@ -106,7 +118,9 @@ function UserOrderCard({ data }) {
             {/* Subtotal */}
             <div className="flex items-center justify-between pt-2 border-t border-gray-200">
               <span className="text-sm text-gray-600">Subtotal</span>
-              <span className="font-bold text-gray-900">₹{shopOrder.subTotal}</span>
+              <span className="font-bold text-gray-900">
+                ₹{shopOrder.subTotal}
+              </span>
             </div>
           </div>
         ))}
@@ -118,7 +132,9 @@ function UserOrderCard({ data }) {
           <IoCardOutline className="w-4 h-4 text-gray-500" />
           <div>
             <p className="text-xs text-gray-500 uppercase">
-              {data.paymentMethod === "cod" ? "Cash on Delivery" : "Online Payment"}
+              {data.paymentMethod === "cod"
+                ? "Cash on Delivery"
+                : "Online Payment"}
             </p>
             {data.paymentMethod !== "cod" && (
               <p className="text-xs font-semibold text-gray-700">
@@ -131,16 +147,19 @@ function UserOrderCard({ data }) {
         <div className="flex items-center gap-4">
           <div className="text-right">
             <p className="text-xs text-gray-500">Total</p>
-            <p className="font-bold text-gray-900 text-lg">₹{data.totalAmount}</p>
+            <p className="font-bold text-gray-900 text-lg">
+              ₹{data.totalAmount}
+            </p>
           </div>
-
-          <button
-            onClick={() => navigate(`/track-order/${data._id}`)}
-            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
-          >
-            <MdDeliveryDining className="w-4 h-4" />
-            <span>Track</span>
-          </button>
+          {data.shopOrder?.[0].status !== "delivered" && (
+            <button
+              onClick={() => navigate(`/track-order/${data._id}`)}
+              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
+            >
+              <MdDeliveryDining className="w-4 h-4" />
+              <span>Track</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

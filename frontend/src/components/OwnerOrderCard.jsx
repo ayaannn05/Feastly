@@ -106,21 +106,23 @@ function OwnerOrderCard({ data }) {
           </span>
         </span>
 
-        <select
-          className="rounded-md border px-3 py-1 text-sm focus:outline-none focus:ring-2 border-[#ff4d2d] text-[#ff4d2d]"
-          onChange={(e) =>
-            handleUpdateStatus(
-              data._id,
-              data.shopOrder[0].shop._id,
-              e.target.value
-            )
-          }
-        >
-          <option>Change</option>
-          <option value="pending">Pending</option>
-          <option value="preparing">Preparing</option>
-          <option value="out of delivery">Out Of Delivery</option>
-        </select>
+        {data.shopOrder[0].status !== "delivered" && (
+          <select
+            className="rounded-md border px-3 py-1 text-sm focus:outline-none focus:ring-2 border-[#ff4d2d] text-[#ff4d2d]"
+            onChange={(e) =>
+              handleUpdateStatus(
+                data._id,
+                data.shopOrder[0].shop._id,
+                e.target.value
+              )
+            }
+          >
+            <option>Change</option>
+            <option value="pending">Pending</option>
+            <option value="preparing">Preparing</option>
+            <option value="out of delivery">Out Of Delivery</option>
+          </select>
+        )}
       </div>
 
       {data.shopOrder[0].status === "out of delivery" && (
