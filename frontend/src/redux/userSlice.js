@@ -12,6 +12,9 @@ const userSlice = createSlice({
     cartItems: [],
     totalAmount: 0,
     myOrders: [],
+    searchItems: null,
+    searchQuery: "",
+    isSearching: false,
   },
   reducers: {
     setUserData: (state, action) => {
@@ -81,6 +84,18 @@ const userSlice = createSlice({
         shopOrder.status = status;
       }
     },
+    setSearchItems: (state, action) => {
+      state.searchItems = action.payload;
+      state.isSearching = false;
+    },
+    setSearchQuery: (state, action) => {
+      state.searchQuery = action.payload;
+      if (action.payload && action.payload.trim() !== "") {
+        state.isSearching = true;
+      } else {
+        state.isSearching = false;
+      }
+    },
   },
 });
 
@@ -97,5 +112,7 @@ export const {
   updateQuantity,
   removeFromCart,
   updateOrderStatus,
+  setSearchItems,
+  setSearchQuery,
 } = userSlice.actions;
 export default userSlice.reducer;

@@ -6,11 +6,12 @@ import { RxCross2 } from "react-icons/rx";
 import { HiLogout } from "react-icons/hi";
 import { PiBowlFoodFill } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { serverUrl } from "../App";
 import { setUserData } from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
+import { setSearchItems, setSearchQuery } from "../redux/userSlice";
 
 function Nav() {
   const { userData, currentCity, cartItems } = useSelector(
@@ -19,12 +20,13 @@ function Nav() {
   const { myShopData } = useSelector((state) => state.owner);
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [query, setQuery] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogOut = async () => {
     try {
-      const res = await axios.get(`${serverUrl}/api/auth/signout`, {
+      await axios.get(`${serverUrl}/api/auth/signout`, {
         withCredentials: true,
       });
       dispatch(setUserData(null));
@@ -32,6 +34,44 @@ function Nav() {
       console.log(err);
     }
   };
+
+  const handleSearchItems = useCallback(async () => {
+  
+    if (!query || query.trim() === "") {
+      return;
+    }
+
+    try {
+      const result = await axios.get(
+        `${serverUrl}/api/item/search-items?query=${query}&city=${currentCity}`,
+        {
+          withCredentials: true,
+        }
+      );
+      dispatch(setSearchItems(result.data));
+      console.log("Search results:", result.data);
+  
+    } catch (error) {
+      console.log("Search error:", error);
+      
+    }
+  }, [query, currentCity, dispatch]);
+
+  useEffect(() => {
+    if (!query || query.trim() === "") {
+      dispatch(setSearchItems(null));
+      dispatch(setSearchQuery(""));
+      return; 
+    }
+    
+    dispatch(setSearchQuery(query.trim()));
+    
+    const debounceTimer = setTimeout(() => {
+      handleSearchItems();
+    }, 500);
+
+    return () => clearTimeout(debounceTimer);
+  }, [query, currentCity, handleSearchItems, dispatch]);
 
   return (
     <>
@@ -71,6 +111,8 @@ function Nav() {
                 type="text"
                 placeholder="Search delicious food..."
                 autoFocus
+                onChange={(e)=>setQuery(e.target.value) }
+                value={query}
               />
             </div>
           </div>
@@ -97,6 +139,9 @@ function Nav() {
                 className="flex-1 text-sm text-gray-900 placeholder-gray-500 bg-transparent outline-none font-medium"
                 type="text"
                 placeholder="Search for restaurants, cuisines, dishes..."
+                onChange={(e)=>setQuery(e.target.value) }
+                value={query}
+
               />
             </div>
           </div>

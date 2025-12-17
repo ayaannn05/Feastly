@@ -9,8 +9,11 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+
+
+
 function UserDashboard() {
-  const { currentCity, shopInMyCity, itemsInMyCity } = useSelector(
+  const { currentCity, shopInMyCity, itemsInMyCity, searchItems, searchQuery, isSearching } = useSelector(
     (state) => state.user
   );
   const cateScrollRef = useRef();
@@ -54,6 +57,9 @@ function UserDashboard() {
     ref.current.scrollBy(scrollOptions);
   };
 
+
+
+
   useEffect(() => {
     if (cateScrollRef.current) {
       updateButton(
@@ -82,6 +88,8 @@ function UserDashboard() {
       });
     }
 
+
+
     return () => {
       cateScrollRef?.current?.removeEventListener("scroll", () => {
         updateButton(
@@ -103,6 +111,82 @@ function UserDashboard() {
   return (
     <div className="w-screen min-h-screen flex flex-col gap-5 items-center bg-[#fff9f6] overflow-y-auto">
       <Nav />
+
+      {isSearching && (
+        <div className="w-full max-w-6xl flex flex-col gap-5 items-center justify-center p-10 mt-8">
+          <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full text-center border border-orange-100">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-16 h-16 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div>
+              <p className="text-gray-600 font-medium">Searching for "{searchQuery}"...</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+{searchItems && searchItems.length > 0 && (
+        <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]">
+          <h1 className="text-gray-800 text-2xl sm:text-3xl ">
+            Search Results
+          </h1>
+          <div className="w-full relative ">
+            <div
+              className="w-full flex overflow-x-auto gap-4 pb-2 scrollbar-thin scrollbar-thumb-[#ff4d2d] scroll-smooth scrollbar-track-transaparent "
+            >
+              {searchItems.map((item, index) => (
+                <FoodCard key={index} data={item} />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {searchQuery && !isSearching && (!searchItems || searchItems.length === 0) && (
+        <div className="w-full max-w-6xl flex flex-col gap-5 items-center justify-center p-10 mt-8">
+          <div className="bg-white rounded-2xl shadow-lg p-12 max-w-md w-full text-center border border-orange-100">
+            <div className="mb-6">
+              <div className="w-24 h-24 mx-auto bg-gradient-to-br from-orange-100 to-red-100 rounded-full flex items-center justify-center">
+                <svg 
+                  className="w-12 h-12 text-orange-500" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
+                  />
+                </svg>
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-3">
+              No Items Found
+            </h2>
+            <p className="text-gray-600 mb-2">
+              We couldn't find any items matching
+            </p>
+            <p className="text-orange-600 font-semibold text-lg mb-6">
+              "{searchQuery}"
+            </p>
+            <div className="space-y-3 text-left">
+              <p className="text-sm text-gray-500 flex items-start gap-2">
+                <span className="text-orange-500 mt-0.5">•</span>
+                Try adjusting your search terms
+              </p>
+              <p className="text-sm text-gray-500 flex items-start gap-2">
+                <span className="text-orange-500 mt-0.5">•</span>
+                Check if the item is available in {currentCity}
+              </p>
+              <p className="text-sm text-gray-500 flex items-start gap-2">
+                <span className="text-orange-500 mt-0.5">•</span>
+                Browse our categories below for more options
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]">
         <h1 className="text-gray-800 text-2xl sm:text-3xl ">
           Inspiration for your first order
