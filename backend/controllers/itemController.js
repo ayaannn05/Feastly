@@ -140,6 +140,41 @@ export const getItemByCategory = async (req, res) => {
 
     return res.status(200).json(items);
   } catch (error) {
-    return res.status(500).json({ message: `get items by category error ${error}` });
+    return res
+      .status(500)
+      .json({ message: `get items by category error ${error}` });
   }
-};  
+};
+
+export const getItemBySearch = async (req, res) => {
+  try {
+    const { query, city } = req.query;
+    if (!query || !city) {
+      return res.status(400).json({ message: "search query is required" });
+    }
+    const shops = await Shop.find({
+      city: { $regex: new RegExp(`^${city}$`, "i") },
+    });
+    if (!shops) {
+      return res.status(400).json({ message: "shops not found" });
+    }
+    const shopIds = shops.map((shop) => shop._id);
+    const items = await Item.find({
+      $or: [
+        { name: { $regex: new RegExp(query, "i") } },
+        { category: { $regex: new RegExp(query, "i") } },
+      ],
+      shop: { $in: shopIds },
+    }).populate("shop");
+
+    if (!items) {
+      return res.status(400).json({ message: "items not found" });
+    }
+
+    return res.status(200).json(items);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `get items by search error ${error}` });
+  }
+};
