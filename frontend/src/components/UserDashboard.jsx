@@ -187,7 +187,7 @@ function UserDashboard() {
         </div>
       )}
 
-      <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]">
+      <div className="w-full max-w-7xl flex flex-col gap-5 items-start p-[10px]">
         <h1 className="text-gray-800 text-2xl sm:text-3xl ">
           Inspiration for your first order
         </h1>
@@ -225,7 +225,7 @@ function UserDashboard() {
         </div>
       </div>
 
-      <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]">
+      <div className="w-full max-w-7xl flex flex-col gap-5 items-start p-[10px]">
         <h1 className="text-gray-800 text-2xl sm:text-3xl">
           Best Shop in {currentCity}
         </h1>
@@ -263,7 +263,7 @@ function UserDashboard() {
         </div>
       </div>
 
-      <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]">
+      <div className="w-full max-w-7xl flex flex-col gap-5 items-start p-[10px]">
         <h1 className="text-gray-800 text-2xl sm:text-3xl">
           Suggested Food Items
         </h1>

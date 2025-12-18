@@ -51,10 +51,10 @@ function OwnerItemCard({ data }) {
               {data.name}
             </h3>
 
-            <div className="flex flex-wrap gap-2 text-sm">
-              <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-100 text-gray-700">
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="inline-flex items-center px-2.5 py-1  rounded-lg bg-gray-100 text-gray-700">
                 <svg
-                  className="w-3.5 h-3.5 mr-1.5"
+                  className="w-2.5 h-2.5 mr-1.5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -76,7 +76,7 @@ function OwnerItemCard({ data }) {
               ₹{data.price}
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <button
                 onClick={() => navigate(`/edit-item/${data._id}`)}
                 className="p-2.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 hover:scale-110 transition-all duration-200 group/edit"
